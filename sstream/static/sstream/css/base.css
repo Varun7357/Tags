@@ -1,0 +1,106 @@
+#home.container-fluid {
+    background: #ffffff url("../image/arnold.jpg") repeat;
+    background-size: contain;
+    min-height: 2000px;
+    height: 100%;
+    margin: 0px;
+}
+
+
+.transLinks {
+    -moz-border-radius: 10px; /* for Firefox */
+    -webkit-border-radius: 10px; /* for Webkit-Browsers */
+    border-radius: 10px; /* regular */
+    opacity: 0.5; /* Transparent Background 50% */
+    border: 5px solid #ffffff ;
+    font-size: 24px;
+    color: #ffffff;
+    padding: 5px;
+}
+
+
+#transOverlay {
+    z-index: 10;
+    display: block;
+    position: relative;
+    width: 100%;
+    height: 200px;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+#divCenter.container {
+    font-size: 14px;
+    color: #ffffff;
+    font-weight: bold;
+    position: relative;
+    margin-top: 5%;
+    left: 50%;
+}
+
+
+.navbar-right {
+    margin-right: 48px;
+}
+
+
+.navbar-inverse .navbar-text {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.navbar-brand {
+    padding: 15px 60px;
+    font-size: 25px;
+    font-weight: bold;
+}
+
+.nav>li>a {
+    font-size: 17px;
+    font-weight: bold;
+}
+
+.dropdown-menu {
+    font-size: 20px;
+}
+
+@media(min-width:768px) {
+    .side-nav {
+        position: fixed;
+        top: 51px;
+        left: 225px;
+        width: 225px;
+        margin-left: -225px;
+        border: none;
+        border-radius: 0;
+        overflow-y: auto;
+        background-color: #222;
+    }
+
+    .side-nav>li>a {
+        width: 225px;
+    }
+
+    .side-nav li a:hover,
+    .side-nav li a:focus {
+        outline: none;
+        background-color: #000 !important;
+    }
+}
+
+.side-nav>li>ul {
+    padding: 0;
+}
+
+.side-nav>li>ul>li>a {
+    display: block;
+    padding: 10px 15px 10px 38px;
+    text-decoration: none;
+    color: #999;
+}
+
+.side-nav>li>ul>li>a:hover {
+    color: #fff;
+}
