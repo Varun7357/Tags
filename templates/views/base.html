@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+   <meta charset="utf-8">
+   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+   <meta name="description" content="">
+   <meta name="author" content="Nitin">
+
+   <!-- title -->
+   <title>{% block title %}sstream{% endblock %}</title>
+
+
+   <!-- Base css -->
+    {% load staticfiles %}
+    <!-- Bootstrap and jquery-->
+    <script src="{% static 'sstream/js/jquery.js' %}"></script>
+    <link rel="stylesheet"  href="{% static 'sstream/css/bootstrap.min.css' %}"/>
+    <!-- Custom CSS -->
+    <link rel="stylesheet"  href="{% static 'sstream/css/sb-admin.css' %}"/>
+    <!-- Custom Fonts -->
+    <link rel="stylesheet" href="{% static 'sstream/font-awesome/css/font-awesome.min.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'sstream/css/angucomplete.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'sstream/css/btnUpload.min.css' %}"/>
+
+
+     <script src="{% static 'sstream/js/bootstrap.min.js' %}"></script>
+     <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true&libraries=places&language=en-US"></script>
+     {% comment %}<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=true&libraries=places&language=en-US"></script>{% endcomment %}
+     {#   <script src="{% static 'sstream/js/angular/angular.min.js' %}"></script>#}
+     {#   <script src="{% static 'sstream/js/angular/angular-cookies.min.js' %}"></script>#}
+     {#   <script src="{% static 'sstream/js/angular/angular-loader.min.js' %}"></script>#}
+     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.0rc1/angular-route.min.js"></script>
+     <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.js"></script>
+     <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular-cookies.min.js"></script>
+     <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular-loader.min.js"></script>
+     <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular-touch.min.js"></script>
+     <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular-animate.min.js"></script>
+
+
+
+
+
+
+
+     <script src="{% static 'sstream/js/app.js' %}"></script>
+
+{#     <script src="{% static 'sstream/js/controller/checklist-model.js' %}"></script>#}
+{#     <script src="{% static 'sstream/js/controller/search_controller.js' %}"></script>#}
+{#     <script src="{% static 'sstream/js/controller/life_cycle_controller.js' %}"></script>#}
+{#     <script src="{% static 'sstream/js/controller/fitcenter_controller.js' %}"></script>#}
+{#     <script src="{% static 'sstream/js/controller/image-controller.js' %}"></script>#}
+{#     <script src="{% static 'sstream/js/controller/index_controller.js' %}"></script>#}
+     <script src="{% static 'sstream/js/util/utils.js' %}"></script>
+     <script src="{% static 'sstream/js/plugins/angucomplete.js' %}"></script>
+     <script src="{% static 'sstream/js/plugins/ui-bootstrap-custom-0.12.0.js' %}"></script>
+     <script src="{% static 'sstream/js/plugins/ui-bootstrap-custom-0.12.0.min.js' %}"></script>
+     <script src="{% static 'sstream/js/plugins/ui-bootstrap-custom-tpls-0.12.0.js' %}"></script>
+     <script src="{% static 'sstream/js/plugins/ui-bootstrap-custom-tpls-0.12.0.min.js' %}"></script>
+     <script src="{% static 'sstream/js/plugins/ng-map.min.js' %}"></script>
+     <script src="{% static 'sstream/js/plugins/angular-upload.min.js' %}"></script>
+     <script type="text/javascript" src="http://fgnass.github.io/spin.js/spin.min.js"></script>
+     <script src="{% static 'sstream/js/plugins/angular-spinner.miripn.js' %}"></script>
+     <script src="{% static 'sstream/js/plugins/angular-loading-spinner.js' %}"></script>
+
+{#     <script src="{% static 'sstream/js/plugins/angular-upload.min.js' %}"></script>#}
+{#     <script src="{% static 'sstream/js/bower_components/angular-ui-utils/ui-utils.min.js' %}"></script>#}
+{#     <script src="{% static 'sstream/js/bower_components/angular-ui-map/ui-map.min.js' %}"></script>#}
+
+     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+     <!--[if lt IE 9]>
+     <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+     <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+   <![endif]-->
+ </head>
+ <body ng-app="app">
+   <div id="wrapper">
+       {% block header %}{% endblock %}
+       <div id="page-wrapper" >
+            <div style="position: fixed; top: 50%; left: 50%; z-index:1 ">
+            <span us-spinner="{radius:30, width:8, length: 16}"></span>
+            </div>
+            {% block content %}
+
+            {% endblock %}
+       </div>
+       {% block footer %}{% endblock %}
+   </div>
+
+ </body>
+</html>

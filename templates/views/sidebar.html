@@ -1,0 +1,17 @@
+{% extends 'views/header.html' %}
+
+{% block sidebar %}
+    <div class="collapse navbar-collapse navbar-ex1-collapse">
+        <ul class="nav navbar-nav side-nav">
+            <li>
+                <a href="javascript:;" data-toggle="collapse" data-target="#demo">
+                    SS Meta data Management <i class="fa fa-fw fa-caret-down"></i></a>
+                <ul id="demo" class="collapse in">
+                    <li>
+{#                        <a href="{% url 'search_company' %}">Search company</a>#}
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+{% endblock %}
