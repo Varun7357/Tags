@@ -26,6 +26,10 @@ TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = []
 
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '267665943057-m928r90eq7au1h95rc16igl67qm3g255.apps.googleusercontent.com'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '-E9vS1eOLdH_Ig7nwv2GR4wn'
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/index/'
+SOCIAL_AUTH_LOGIN_URL = '/'
 
 # Application definition
 
@@ -39,7 +43,8 @@ INSTALLED_APPS = (
     'rest_framework',
     'rest_framework.authtoken',
     'sstream',
-    'manageboard'
+    'manageboard',
+    'social.apps.django_app.default'
 
 )
 
@@ -51,6 +56,28 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+)
+
+
+SOCIAL_AUTH_PIPELINE = (
+    'social.pipeline.social_auth.social_details',
+    'social.pipeline.social_auth.social_uid',
+    'social.pipeline.social_auth.auth_allowed',
+    'sstream.social_auth.social_user',
+    'social.pipeline.user.get_username',
+    'social.pipeline.user.create_user',
+    'social.pipeline.social_auth.associate_user',
+    'social.pipeline.social_auth.load_extra_data',
+    'social.pipeline.user.user_details',
+    'sstream.social_auth.switch_user'
+)
+
+AUTHENTICATION_BACKENDS = (
+    'social.backends.facebook.FacebookOAuth2',
+    'social.backends.google.GoogleOAuth2',
+    'social.backends.twitter.TwitterOAuth',
+    'django.contrib.auth.backends.ModelBackend',
+    'guardian.backends.ObjectPermissionBackend'
 )
 
 ROOT_URLCONF = 'sstream.urls'
@@ -76,6 +103,7 @@ DATABASES = {
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/
 
+
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
@@ -85,6 +113,7 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
+
 
 LOGGING = {
     'version': 1,
@@ -130,3 +159,5 @@ LOGGING = {
 STATIC_URL = '/static/'
 
 TEMPLATE_DIRS = [os.path.join(BASE_DIR, 'templates')]
+
+ANONYMOUS_USER_ID = -1

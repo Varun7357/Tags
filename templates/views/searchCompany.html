@@ -1,0 +1,129 @@
+{% extends 'views/sidebar.html' %}
+
+{% block content %}
+    <div class="container-fluid" ng-init="init()" ng-controller="searchController">
+        <div class="row">
+            <div class="col-sm-12">
+                <h3 class="page-header">
+                    Search Company
+                </h3>
+            </div>
+        </div>
+        <div class="row" style="margin-left: 0px">
+            <form role="form" name="companyForm" ng-submit="submitForm()" novalidate>
+
+                <div class="row">
+                    <div class="col-sm-3">
+                        <label>Company Name</label>
+                        <input type="text" ng-model="companies" placeholder="Search Company"
+                               typeahead="companies.name for companies in getCompanies($viewValue) | filter:$viewValue | limitTo:8"
+                             typeahead-loading="loading"  typeahead-min-length="2" typeahead-wait-ms="310" class="form-control">
+                    </div>
+                </div>
+                <div class="row">
+                    {% comment %} start date {% endcomment %}
+                    <div class="col-sm-3">
+                        <label>Start Date</label>
+
+                        <p class="input-group">
+                            <input type="text" class="form-control" datepicker-popup="{{ format }}" ng-model="st_dt"
+                                   is-open="opened1" min-date="minDate" max-date="'2015-06-22'"
+                                   datepicker-options="dateOptions" date-disabled="disabled(date, mode)"
+                                   close-text="Close"/>
+                        <span class="input-group-btn">
+                            <button type="button" class="btn btn-default" ng-click="st_open($event)"><i
+                                    class="glyphicon glyphicon-calendar"></i></button>
+                        </span>
+                        </p>
+                    </div>
+                    {% comment %} end date {% endcomment %}
+                    <div class="col-sm-3">
+                        <label>End Date</label>
+
+                        <p class="input-group">
+                            <input type="text" class="form-control" datepicker-popup="{{ format }}" ng-model="ed_dt"
+                                   is-open="opened" min-date="minDate" max-date="'2015-06-22'"
+                                   datepicker-options="dateOptions" date-disabled="disabled(date, mode)"
+                                   close-text="Close"/>
+                        <span class="input-group-btn">
+                            <button type="button" class="btn btn-default" ng-click="ed_open($event)"><i
+                                    class="glyphicon glyphicon-calendar"></i></button>
+                        </span>
+                        </p>
+                    </div>
+
+                </div>
+{#                <div class="row">#}
+{#                    <div class="col-sm-3">#}
+{#                        <label>Author</label>#}
+{#                        <input type="text" ng-model="user.id" placeholder="Search Users"#}
+{#                               typeahead="users.first_name for users in getUser($viewValue)"#}
+{#                               typeahead-loading="LoadingUsers" class="form-control">#}
+{#                    </div>#}
+{#                    #}
+{#                </div>#}
+                <button type="submit" ng-click="submit()" class="btn btn-primary" ng-disabled="isProcessing">Search</button>
+                <button type="reset" ng-click="reset()" class="btn btn-primary" ng-disabled="isProcessing">Clear All</button>
+            </form>
+        </div>
+        {% comment %} Results {% endcomment %}
+        <div class="row">
+            <div class="col-sm-12">
+                <h3 class="page-header">
+                    Results: {$ totalItems $}
+                </h3>
+
+            </div>
+        </div>
+
+            <div class="col-sm-12">
+                <div class="row">
+                    <pagination items-per-page="itemsPerPage" boundary-links="true" total-items="totalItems"
+                                ng-model="currentPage" ng-change="pageChanged()" class="pagination-sm" max-size="10"></pagination>
+                </div>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Status</th>
+                        <th>Author</th>
+                        <th>Actions</th>
+
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="article in articleList">
+                        <td class="col-sm-3">
+                            <span style="font-weight: bold">{$ article.headline $}</span>
+                        </td>
+                        <td class="col-sm-3">
+
+
+                            <div style="font-size: 12px; font-style: italic;">
+                                {$ article.author + " on " + article.created $}
+                            </div>
+
+                            <div style="font-size: 12px; font-style: italic;">
+                                {$ " at " + article.updated $}
+                            </div>
+                        </td>
+                        <td>
+                            {$ article.author $}
+                        </td>
+
+                        <td>
+                            <a href="/article/edit/{$ article.id $}/"><i class="glyphicon glyphicon-edit"></i></a>
+
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div class="row">
+                    <pagination items-per-page="itemsPerPage" boundary-links="true" total-items="totalItems"
+                                ng-model="currentPage" ng-change="pageChanged()" class="pagination-sm" max-size="10"></pagination>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
