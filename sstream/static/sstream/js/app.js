@@ -1,7 +1,7 @@
 'use strict';
 
-var myApp = angular.module('app', ['ngCookies', 'angucomplete','angularSpinner',
-    'ui.bootstrap', 'ngMap', 'lr.upload', 'ngAnimate' , 'ngLoadingSpinner'])
+var myApp = angular.module('app', ['ngCookies', 'angucomplete', 'angularSpinner',
+    'ui.bootstrap', 'ngMap', 'lr.upload', 'ngAnimate', 'ngLoadingSpinner'])
     .config(['$interpolateProvider', '$httpProvider',
         function ($interpolateProvider, $routeProvider) {
             $interpolateProvider.startSymbol('{$');
@@ -15,9 +15,7 @@ var myApp = angular.module('app', ['ngCookies', 'angucomplete','angularSpinner',
     ]);
 
 
-
-
-myApp.controller('searchController', ['$scope','$http', '$filter', function($scope, $http, $filter) {
+myApp.controller('searchController', ['$scope', '$http', '$filter', function ($scope, $http, $filter) {
 
     $scope.nextLink = null;
     $scope.previousLink = null;
@@ -25,31 +23,31 @@ myApp.controller('searchController', ['$scope','$http', '$filter', function($sco
     $scope.totalItems = 1;
     $scope.prevPage = 0;
     $scope.itemsPerPage = 6;
-    $scope.metaFiles=[];
-    $scope.companies=[];
-    $scope.selectedCompany =[];
+    $scope.metaFiles = [];
+    $scope.companies = [];
+    $scope.selectedCompany = [];
 
 
-    $scope.getCompanies = function(val) {
+    $scope.getCompanies = function (val) {
         return $http.get('/ssadmin/company/all/', {
             params: {
                 search: val
             }
-        }).then(function(response){
-            $scope.companies=response.data;
+        }).then(function (response) {
+            $scope.companies = response.data;
             return response.data;
 
         });
     };
 
 
-    $scope.st_open = function($event) {
+    $scope.st_open = function ($event) {
         $event.preventDefault();
         $event.stopPropagation();
 
         $scope.opened1 = true;
     };
-    $scope.ed_open = function($event) {
+    $scope.ed_open = function ($event) {
         $event.preventDefault();
         $event.stopPropagation();
 
@@ -65,22 +63,22 @@ myApp.controller('searchController', ['$scope','$http', '$filter', function($sco
     //    )
     //};
 
-    $scope.pageChanged = function() {
+    $scope.pageChanged = function () {
         var filterStr = $scope.buildFilter();
 
-           $http.get("metafiles?"+filterStr +"&"+"page="+$scope.currentPage).success(
-                function (resp) {
-                    $scope.totalItems = resp.count;
-                    $scope.centerList = resp.results;
-                }
-            );
+        $http.get("metafiles?" + filterStr + "&" + "page=" + $scope.currentPage).success(
+            function (resp) {
+                $scope.totalItems = resp.count;
+                $scope.centerList = resp.results;
+            }
+        );
 
     };
     //new_dt is for getting the next date of selected date
-    $scope.buildFilter = function() {
+    $scope.buildFilter = function () {
         var fil = "?format=json";
-        if ($scope.companies!=null && $scope.companies.length!=0) {
-            fil = fil + "&" + "name="+$scope.selectedCompany;
+        if ($scope.companies != null && $scope.companies.length != 0) {
+            fil = fil + "&" + "name=" + $scope.selectedCompany;
         }
         //if ($scope.status != null ) {
         //    fil = fil + "&" + "status="+$scope.status.name;
@@ -90,19 +88,17 @@ myApp.controller('searchController', ['$scope','$http', '$filter', function($sco
     };
 
 
-
-    $scope.reset=function()
-    {
-        $scope.companies=null;
+    $scope.reset = function () {
+        $scope.companies = null;
         //$scope.status=null;
 
     };
 
 
-    $scope.submitForm = function() {
+    $scope.submitForm = function () {
         var filterStr = $scope.buildFilter();
         $scope.isProcessing = true;
-        $http.get("/ssadmin/metafiles"+filterStr).success(
+        $http.get("/ssadmin/metafiles" + filterStr).success(
             function (resp) {
 
                 $scope.prevPage = $scope.currentPage;
@@ -111,8 +107,8 @@ myApp.controller('searchController', ['$scope','$http', '$filter', function($sco
                 $scope.nextLink = resp.next;
                 $scope.previousLink = resp.previous;
                 $scope.isProcessing = false;
-                filterStr="";
-                resp=null;
+                filterStr = "";
+                resp = null;
             }
         );
 
@@ -122,16 +118,16 @@ myApp.controller('searchController', ['$scope','$http', '$filter', function($sco
 
 /* Directives */
 angular.module('GoogleDirectives', []).
-    directive('googlePlaces', function(){
+    directive('googlePlaces', function () {
         return {
-            restrict:'E',
-            replace:true,
+            restrict: 'E',
+            replace: true,
             // transclude:true,
-            scope: {location:'=' },
+            scope: {location: '='},
             template: '<input class="form-control" type="text" id="google_places_ac" name="google_places_ac">',
-            link: function($scope, elm, attrs){
+            link: function ($scope, elm, attrs) {
                 var autocomplete = new google.maps.places.Autocomplete($("#google_places_ac")[0], {});
-                google.maps.event.addListener(autocomplete, 'place_changed', function() {
+                google.maps.event.addListener(autocomplete, 'place_changed', function () {
                     var place = autocomplete.getPlace();
                     $scope.location = place; //place.geometry.location.lat() + ',' + place.geometry.location.lng();
                     $scope.lat = place.geometry.location.A;
@@ -144,6 +140,77 @@ angular.module('GoogleDirectives', []).
         }
     });
 
+myApp.controller('metaFieldController', ['$scope', '$http', function ($scope, $http, $location) {
 
+    $scope.edit = false;
+    $scope.length = "";
+    $scope.version = "";
+    $scope.mediaType = "";
+
+    $scope.init = function (meta_id) {
+        console.log('meta id value is ' + meta_id);
+
+        if (meta_id != null || meta_id==undefined) {
+            $scope.edit = true;
+            $scope.meta_id = meta_id;
+        }
+
+        if ($scope.edit) {
+            $http.get("/meta/center/" + $scope.meta_id + "/?format=json").success(
+                function (resp) {
+                    $scope.length = resp.name;
+                    $scope.mediaType = resp.mediaType;
+                    $scope.version = resp.version;
+                }
+            );
+        }
+    };
+
+    $scope.submitForm = function () {
+        $scope.submitted = true;
+        if ($scope.metaForm.$valid) {
+
+            var params = {
+                'length': $scope.length, 'mediaType': $scope.mediaType,
+                'version': $scope.version
+            };
+
+            var api_url = "/save/meta/" + $scope.meta_id;
+
+            $http({
+                url: api_url,
+                method: 'POST',
+                data: $.param(params),
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                    //'sessionid': $cookies.sessionid
+                }
+            }).success(function (data, status, header, config) {
+                $scope.successFlag = true;
+                if (!$scope.edit) {
+                    $scope.centerId = data.id;
+                    $scope.msg = "Saved Successfully";
+                } else {
+                    $scope.msg = " Edited Successfully";
+                }
+
+            }).error(function (data, status, header, config) {
+                $scope.successFlag = false;
+                if (status == 403) {
+                    $scope.msg = "Access denied";
+                }
+                else {
+                    $scope.msg = "Some exception occurred! Please Try Again";
+                }
+            });
+        }
+        else {
+            $scope.successFlag = false;
+            $scope.msg = "Some exception occurred! Please Try Again";
+        }
+    };
+
+
+}]);
 
 

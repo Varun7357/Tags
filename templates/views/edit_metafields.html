@@ -1,0 +1,50 @@
+{% extends 'views/sidebar.html' %}
+
+{% block content %}
+    <div class="container-fluid" ng-init="init({{ meta_id }})" ng-controller="metaFieldController">
+        <div class="row">
+            <div class="col-sm-12">
+                <h3 class="page-header" >
+                    Add/Edit Meta Fields
+                </h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <form role="form" name="metaForm" ng-submit="submitForm()" novalidate>
+                    <div class="form-group" ng-show="submitted">
+                        <span ng-show="successFlag" style="color: green">{$ msg $}</span>
+                        <span ng-show="!successFlag" style="color: red">{$ msg $}</span>
+                    </div>
+
+                    <div class="form-group"
+                         ng-class="{ 'has-error' : metaForm.name.$invalid && (gymForm.name.$dirty || submitted)}">
+                        <label>Length</label>
+                        <input class="form-control" type="text" placeholder="in minutes" name="length" ng-model="length"
+                               ng-required="true">
+
+                        <p class="help-block"
+                           ng-show="gymForm.name.$error.required && (gymForm.name.$dirty || submitted)">
+                            Length is required.
+                        </p>
+                    </div>
+                    <div class="form-group">
+                        <label>version</label>
+                        <input class="form-control" type="text" placeholder=" eg. 1.1" name="version"
+                               ng-model="version">
+                    </div>
+                    <div class="form-group">
+                        <label>mediaType</label>
+                        <input class="form-control" type="text" placeholder="Audio/Video" name="mediaType"
+                               ng-model="mediaType">
+                    </div>
+
+                    {% comment %}<button type="submit" class="btn btn-primary" ng-show="!successFlag">Save</button>{% endcomment %}
+                    <button type="submit" class="btn btn-primary" data-ng-disabled="metaForm.$invalid || submitted">
+                        Save
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

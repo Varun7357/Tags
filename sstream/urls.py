@@ -18,11 +18,9 @@ urlpatterns = patterns('', url(r'^ssadmin/', include(router.urls)),
                        url(r'^index/$', views.dashboard),
                        url(r'^sync/companies/$', views.sync_companies),
                        url(r'^sync/files/(?P<company_id>\d+)', views.sync_files),
-                       #url(r'^get/meta/(?P<company_id>\d+)', views.FethMetaDataForCompany),
+                       # url(r'^get/meta/(?P<company_id>\d+)', views.fetch_metadata),
+                       url(r'^metafile/edit/(?P<meta_id>\d+)', views.get_metafields),
                        url(r'^save/meta/(?P<meta_id>\d+)', views.save_metadata),
-
-
-
 
 
 )

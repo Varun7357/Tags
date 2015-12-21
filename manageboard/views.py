@@ -15,6 +15,7 @@ from django.db import transaction
 from rest_framework import viewsets
 from rest_framework.filters import SearchFilter
 import django_filters
+from django.shortcuts import render_to_response
 
 
 
@@ -28,6 +29,16 @@ def login(request):
 
 def dashboard(request):
     return render(request, 'views/searchCompany.html')
+
+
+def get_metafields(request , meta_id):
+    meta_obj = MetaData.objects.filter(id=meta_id).first()
+    meta_fields = meta_obj.metaFields
+    if meta_fields is None:
+       return render(request, 'views/edit_metafields.html')
+
+    else:
+        return render_to_response('views/edit_metafields.html', {'meta_fields': meta_fields})
 
 
 #
@@ -108,6 +119,7 @@ def save_metadata(request, meta_id):
         return Response("OK", status.HTTP_200_OK)
     except Exception, e:
         return Response(str(e), status.HTTP_400_BAD_REQUEST)
+
 
 
 
