@@ -35,7 +35,7 @@ myApp.controller('searchController', ['$scope','$http', '$filter', function($sco
                 search: val
             }
         }).then(function(response){
-            $scope.companies = response.data;
+            return response.data;
 
         });
     };
@@ -114,18 +114,6 @@ myApp.controller('searchController', ['$scope','$http', '$filter', function($sco
         if ($scope.status != null ) {
             fil = fil + "&" + "status="+$scope.status.name;
         }
-        if ($scope.user != null) {
-
-            fil = fil + "&" + "assigned="+$scope.user;
-        }
-
-        if ($scope.imageStatus != null) {
-            fil = fil + "&" + "image_status="+$scope.image_status;
-        }
-        if ($scope.day_pass == 'True') {
-            fil = fil + "&" + "day_pass=8";
-        }
-
 
         return fil;
     };
