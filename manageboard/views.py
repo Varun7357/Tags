@@ -111,6 +111,29 @@ def save_metadata(request, meta_id):
 
 
 
+# @transaction.atomic
+# @api_view(['POST'])
+# @authentication_classes((TokenAuthentication, SessionAuthentication,))
+# @permission_classes((IsAuthenticated,))
+# def get_metadata(request, meta_id):
+#     try:
+#
+#         length = request.data['length']
+#         version = request.data['version']
+#         mediaType = request.data['mediaType']
+#         meta_fields = MetaFields.objects.create(length=length, version=version, mediaType=mediaType)
+#         meta_fields.save()
+#         meta_data = MetaData.objects.filter(id=meta_id).first()
+#         meta_data.metaFields_id = meta_fields.id
+#         meta_data.save()
+#         # status_incomplete = MetaStatus.objects.filter(name=MetaStatusConstants.INCOMPLETE).first()
+#
+#         return Response("OK", status.HTTP_200_OK)
+#     except Exception, e:
+#         return Response(str(e), status.HTTP_400_BAD_REQUEST)
+
+
+
 @authentication_classes((TokenAuthentication, SessionAuthentication,))
 @permission_classes((IsAuthenticated,))
 class CompanyViewSet(viewsets.ModelViewSet):
@@ -139,20 +162,57 @@ class MetaStatusViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = MetaFieldSerializer
 
 
+# @authentication_classes((TokenAuthentication, SessionAuthentication,))
+# @permission_classes((IsAuthenticated,))
+# class MetaDataFilter(django_filters.FilterSet):
+#     company = django_filters.CharFilter(name='name')
+
+
 @authentication_classes((TokenAuthentication, SessionAuthentication,))
 @permission_classes((IsAuthenticated,))
 class MetaDataFilter(django_filters.FilterSet):
-    company = django_filters.CharFilter(name='name')
+    # status = django_filters.CharFilter(name='currentDataState__name')
+    name = django_filters.CharFilter(name='name')
+
+
+    class Meta:
+        model = MetaData
+
+
+
+# @authentication_classes((TokenAuthentication, SessionAuthentication,))
+# @permission_classes((IsAuthenticated,))
+# class MetaDataViewSet(viewsets.ModelViewSet):
+#     serializer_class = MetaDataSerializer
+#
+#     def get_queryset(self):
+#         name = self.request.QUERY_PARAMS['name']
+#         company = MediaCompany.objects.filter(name=name)
+#         queryset = MetaData.objects.filter(company=company).first()
+#         if not queryset:
+#             return Response(status=status.HTTP_400_BAD_REQUEST)
+#         serializer = MetaDataSerializer(queryset)
+#         return Response(serializer.data, status=status.HTTP_200_OK)
+#     #
+    # # queryset = get_queryset()
+    # #filter_class = MetaDataFilter
+    # paginate_by = 6
+    # paginate_by_param = 'page_size'
+    # max_paginate_by = 10
+    # # queryset._result_cache = None
+
+
 
 
 
 @authentication_classes((TokenAuthentication, SessionAuthentication,))
 @permission_classes((IsAuthenticated,))
-class FethMetaDataForCompany(viewsets.ModelViewSet):
-    queryset = MetaData.objects.all()
+class MetaDataViewSet(viewsets.ModelViewSet):
     serializer_class = MetaDataSerializer
+    queryset = MetaData.objects.all()
     filter_class = MetaDataFilter
     paginate_by = 6
     paginate_by_param = 'page_size'
-    max_paginate_by = 10
     queryset._result_cache = None
+
+
