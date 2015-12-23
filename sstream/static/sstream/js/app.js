@@ -147,23 +147,26 @@ myApp.controller('metaFieldController', ['$scope', '$http', function ($scope, $h
     $scope.version = "";
     $scope.mediaType = "";
 
-    $scope.init = function (meta_id) {
-        console.log('meta id value is ' + meta_id);
 
-        if (meta_id != null || meta_id==undefined) {
-            $scope.edit = true;
-            $scope.meta_id = meta_id;
-        }
+    $scope.setValues = function (meta_id) {
 
-        if ($scope.edit) {
-            $http.get("/meta/center/" + $scope.meta_id + "/?format=json").success(
-                function (resp) {
-                    $scope.length = resp.name;
-                    $scope.mediaType = resp.mediaType;
-                    $scope.version = resp.version;
+        $scope.meta_id = meta_id;
+        $http.get("/metadata/exists/" + $scope.meta_id).success(
+            function (resp) {
+                $scope.edit = resp;
+                if ($scope.edit) {
+                    $http.get("/get/metadata/" + $scope.meta_id).success(
+                        function (resp) {
+                            $scope.length = resp.length;
+                            $scope.mediaType = resp.mediaType;
+                            $scope.version = resp.version;
+                        }
+                    );
                 }
-            );
-        }
+
+            });
+
+
     };
 
     $scope.submitForm = function () {
@@ -188,7 +191,7 @@ myApp.controller('metaFieldController', ['$scope', '$http', function ($scope, $h
             }).success(function (data, status, header, config) {
                 $scope.successFlag = true;
                 if (!$scope.edit) {
-                    $scope.centerId = data.id;
+                    $scope.field_id = data.id;
                     $scope.msg = "Saved Successfully";
                 } else {
                     $scope.msg = " Edited Successfully";

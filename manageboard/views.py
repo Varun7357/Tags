@@ -6,7 +6,7 @@ from rest_framework.parsers import FileUploadParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 import boto
-from serializer import CompanySerializer ,MetaDataSerializer ,MetaFieldSerializer
+from serializer import CompanySerializer, MetaDataSerializer, MetaFieldSerializer
 from models import MediaCompany, MetaData, MetaStatus, MetaFields
 from rest_framework.filters import SearchFilter
 from rest_framework.permissions import IsAuthenticated
@@ -15,7 +15,11 @@ from django.db import transaction
 from rest_framework import viewsets
 from rest_framework.filters import SearchFilter
 import django_filters
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, get_object_or_404,redirect
+from django.template.context import RequestContext
+from util import email_check
+from django.contrib.auth.decorators import user_passes_test, login_required
+from django.contrib.auth import logout as auth_logout
 
 
 
@@ -23,28 +27,26 @@ from django.shortcuts import render_to_response
 # Create your views here.
 
 
+
 def login(request):
     return render(request, 'views/index.html')
 
 
+@user_passes_test(email_check, login_url='/')
 def dashboard(request):
     return render(request, 'views/searchCompany.html')
 
 
-def get_metafields(request , meta_id):
-    meta_obj = MetaData.objects.filter(id=meta_id).first()
-    meta_fields = meta_obj.metaFields
-    if meta_fields is None:
-       return render(request, 'views/edit_metafields.html')
-
-    else:
-        return render_to_response('views/edit_metafields.html', {'meta_fields': meta_fields})
+def get_metafields(request, meta_id):
+    meta_obj = get_object_or_404(MetaData, pk=meta_id)
+    context = RequestContext(request, {'user': request.user, 'meta_obj': meta_obj})
+    return render_to_response('views/edit_metafields.html', context_instance=context)
 
 
-#
-# def logout(request):
-# auth_logout(request)
-#     return redirect('/')
+@user_passes_test(email_check, login_url='/')
+def logout(request):
+      auth_logout(request)
+      return redirect('/')
 
 
 @api_view(['GET'])
@@ -99,51 +101,34 @@ def sync_files(request, company_id):
     except Exception, e:
         return Response(str(e), status.HTTP_400_BAD_REQUEST)
 
+
 @transaction.atomic
 @api_view(['POST'])
 @authentication_classes((TokenAuthentication, SessionAuthentication,))
 @permission_classes((IsAuthenticated,))
 def save_metadata(request, meta_id):
     try:
-
+        meta_obj = MetaData.objects.filter(id=meta_id).first()
         length = request.data['length']
         version = request.data['version']
         mediaType = request.data['mediaType']
-        meta_fields = MetaFields.objects.create(length=length, version=version, mediaType=mediaType)
+        if meta_obj.metaFields is None:
+          meta_fields = MetaFields.objects.create(length=length, version=version, mediaType=mediaType)
+          meta_obj.metaFields_id = meta_fields.id
+          meta_obj.save()
+        else:
+          meta_fields = meta_obj.metaFields
+          meta_fields.length = length
+          meta_fields.version = version
+          meta_fields.mediaType = mediaType
+
         meta_fields.save()
-        meta_data = MetaData.objects.filter(id=meta_id).first()
-        meta_data.metaFields_id = meta_fields.id
-        meta_data.save()
+
         # status_incomplete = MetaStatus.objects.filter(name=MetaStatusConstants.INCOMPLETE).first()
 
         return Response("OK", status.HTTP_200_OK)
     except Exception, e:
         return Response(str(e), status.HTTP_400_BAD_REQUEST)
-
-
-
-
-# @transaction.atomic
-# @api_view(['POST'])
-# @authentication_classes((TokenAuthentication, SessionAuthentication,))
-# @permission_classes((IsAuthenticated,))
-# def get_metadata(request, meta_id):
-#     try:
-#
-#         length = request.data['length']
-#         version = request.data['version']
-#         mediaType = request.data['mediaType']
-#         meta_fields = MetaFields.objects.create(length=length, version=version, mediaType=mediaType)
-#         meta_fields.save()
-#         meta_data = MetaData.objects.filter(id=meta_id).first()
-#         meta_data.metaFields_id = meta_fields.id
-#         meta_data.save()
-#         # status_incomplete = MetaStatus.objects.filter(name=MetaStatusConstants.INCOMPLETE).first()
-#
-#         return Response("OK", status.HTTP_200_OK)
-#     except Exception, e:
-#         return Response(str(e), status.HTTP_400_BAD_REQUEST)
-
 
 
 @authentication_classes((TokenAuthentication, SessionAuthentication,))
@@ -174,12 +159,6 @@ class MetaStatusViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = MetaFieldSerializer
 
 
-# @authentication_classes((TokenAuthentication, SessionAuthentication,))
-# @permission_classes((IsAuthenticated,))
-# class MetaDataFilter(django_filters.FilterSet):
-#     company = django_filters.CharFilter(name='name')
-
-
 @authentication_classes((TokenAuthentication, SessionAuthentication,))
 @permission_classes((IsAuthenticated,))
 class MetaDataFilter(django_filters.FilterSet):
@@ -189,32 +168,6 @@ class MetaDataFilter(django_filters.FilterSet):
 
     class Meta:
         model = MetaData
-
-
-
-# @authentication_classes((TokenAuthentication, SessionAuthentication,))
-# @permission_classes((IsAuthenticated,))
-# class MetaDataViewSet(viewsets.ModelViewSet):
-#     serializer_class = MetaDataSerializer
-#
-#     def get_queryset(self):
-#         name = self.request.QUERY_PARAMS['name']
-#         company = MediaCompany.objects.filter(name=name)
-#         queryset = MetaData.objects.filter(company=company).first()
-#         if not queryset:
-#             return Response(status=status.HTTP_400_BAD_REQUEST)
-#         serializer = MetaDataSerializer(queryset)
-#         return Response(serializer.data, status=status.HTTP_200_OK)
-#     #
-    # # queryset = get_queryset()
-    # #filter_class = MetaDataFilter
-    # paginate_by = 6
-    # paginate_by_param = 'page_size'
-    # max_paginate_by = 10
-    # # queryset._result_cache = None
-
-
-
 
 
 @authentication_classes((TokenAuthentication, SessionAuthentication,))
@@ -228,3 +181,26 @@ class MetaDataViewSet(viewsets.ModelViewSet):
     queryset._result_cache = None
 
 
+@api_view(['GET'])
+def fetch_metadata(request, meta_id):
+    try:
+        meta_obj = MetaData.objects.filter(id= meta_id).first()
+        meta_fields = meta_obj.metaFields
+        serializer = MetaFieldSerializer(instance=meta_fields)
+
+    except Exception, e:
+        return Response(str(e), status.HTTP_400_BAD_REQUEST)
+    return Response(serializer.data, status.HTTP_201_CREATED)
+
+
+@api_view(['GET'])
+def exists_metadata(request, meta_id):
+    try:
+        is_exists = True
+        meta_obj = MetaData.objects.filter(id=meta_id).first()
+        if meta_obj.metaFields == None:
+            is_exists = False
+
+    except Exception, e:
+        return Response(str(e), status.HTTP_400_BAD_REQUEST)
+    return Response(is_exists,status.HTTP_200_OK)

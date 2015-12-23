@@ -1,7 +1,7 @@
 {% extends 'views/sidebar.html' %}
 
 {% block content %}
-    <div class="container-fluid" ng-init="init({{ meta_id }})" ng-controller="metaFieldController">
+    <div class="container-fluid" ng-init="setValues({{meta_obj.id}})" ng-controller="metaFieldController">
         <div class="row">
             <div class="col-sm-12">
                 <h3 class="page-header" >
