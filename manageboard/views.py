@@ -10,12 +10,12 @@ from serializer import CompanySerializer, MetaDataSerializer, MetaFieldSerialize
 from models import MediaCompany, MetaData, MetaStatus, MetaFields
 from rest_framework.filters import SearchFilter
 from rest_framework.permissions import IsAuthenticated
-from constants import MetaStatusConstants , AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY
+from constants import MetaStatusConstants, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY
 from django.db import transaction
 from rest_framework import viewsets
 from rest_framework.filters import SearchFilter
 import django_filters
-from django.shortcuts import render_to_response, get_object_or_404,redirect
+from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.template.context import RequestContext
 from util import email_check
 from django.contrib.auth.decorators import user_passes_test, login_required
@@ -45,8 +45,8 @@ def get_metafields(request, meta_id):
 
 @user_passes_test(email_check, login_url='/')
 def logout(request):
-      auth_logout(request)
-      return redirect('/')
+    auth_logout(request)
+    return redirect('/')
 
 
 @api_view(['GET'])
@@ -108,15 +108,49 @@ def save_metadata(request, meta_id):
         length = request.data['length']
         version = request.data['version']
         mediaType = request.data['mediaType']
+        fileTitle = request.data['fileTitle']
+        description = request.data['description']
+        themes = request.data['themes']
+        god = request.data['god']
+        book = request.data['book']
+        shrines = request.data['shrines']
+        topic = request.data['topic']
+        language = request.data['language']
+        duration = request.data['duration']
+        seriesTitle = request.data['seriesTitle']
+        seriesNumber = request.data['seriesNumber']
+        episodeNumber = request.data['episodeNumber']
+        contentType = request.data['contentType']
+        artist = request.data['artist']
+
         if meta_obj.metaFields is None:
-          meta_fields = MetaFields.objects.create(length=length, version=version, mediaType=mediaType)
-          meta_obj.metaFields_id = meta_fields.id
-          meta_obj.save()
+            meta_fields = MetaFields.objects.create(length=length, version=version, mediaType=mediaType,
+                                                    fileTitle=fileTitle, description=description,
+                                                    themes=themes, god=god, book=book, shrines=shrines, topic=topic,
+                                                    language=language, duration=duration, seriesTitle=seriesTitle,
+                                                    seriesNumber=seriesNumber, episodeNumber=episodeNumber,
+                                                    contentType=contentType, artist=artist)
+            meta_obj.metaFields_id = meta_fields.id
+            meta_obj.save()
         else:
-          meta_fields = meta_obj.metaFields
-          meta_fields.length = length
-          meta_fields.version = version
-          meta_fields.mediaType = mediaType
+            meta_fields = meta_obj.metaFields
+            meta_fields.length = length
+            meta_fields.version = version
+            meta_fields.mediaType = mediaType
+            meta_fields.fileTitle = fileTitle
+            meta_fields.description = description
+            meta_fields.themes = themes
+            meta_fields.god = god
+            meta_fields.book = book
+            meta_fields.shrines = shrines
+            meta_fields.topic = topic
+            meta_fields.language = language
+            meta_fields.duration = duration
+            meta_fields.seriesTitle = seriesTitle
+            meta_fields.seriesNumber = seriesNumber
+            meta_fields.episodeNumber = episodeNumber
+            meta_fields.contentType = contentType
+            meta_fields.artist = artist
 
         meta_fields.save()
 
@@ -180,7 +214,7 @@ class MetaDataViewSet(viewsets.ModelViewSet):
 @api_view(['GET'])
 def fetch_metadata(request, meta_id):
     try:
-        meta_obj = MetaData.objects.filter(id= meta_id).first()
+        meta_obj = MetaData.objects.filter(id=meta_id).first()
         meta_fields = meta_obj.metaFields
         serializer = MetaFieldSerializer(instance=meta_fields)
 
@@ -199,4 +233,4 @@ def exists_metadata(request, meta_id):
 
     except Exception, e:
         return Response(str(e), status.HTTP_400_BAD_REQUEST)
-    return Response(is_exists,status.HTTP_200_OK)
+    return Response(is_exists, status.HTTP_200_OK)
