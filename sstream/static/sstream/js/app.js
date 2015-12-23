@@ -20,7 +20,7 @@ myApp.controller('searchController', ['$scope', '$http', '$filter', function ($s
     $scope.nextLink = null;
     $scope.previousLink = null;
     $scope.currentPage = 1;
-    $scope.totalItems = 1;
+    $scope.totalItems = 0;
     $scope.prevPage = 0;
     $scope.itemsPerPage = 6;
     $scope.metaFiles = [];

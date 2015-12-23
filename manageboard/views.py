@@ -10,7 +10,7 @@ from serializer import CompanySerializer, MetaDataSerializer, MetaFieldSerialize
 from models import MediaCompany, MetaData, MetaStatus, MetaFields
 from rest_framework.filters import SearchFilter
 from rest_framework.permissions import IsAuthenticated
-from constants import MetaStatusConstants
+from constants import MetaStatusConstants , AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY
 from django.db import transaction
 from rest_framework import viewsets
 from rest_framework.filters import SearchFilter
@@ -52,8 +52,6 @@ def logout(request):
 @api_view(['GET'])
 def sync_companies(request):
     try:
-        AWS_ACCESS_KEY_ID = 'AKIAJCLD2GUHLS6VY3LQ'
-        AWS_SECRET_ACCESS_KEY = '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'
         conn = boto.connect_s3(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY)
         bucket = conn.get_bucket('hog-production')
         companies = bucket.list("", "/")
@@ -76,8 +74,6 @@ def sync_companies(request):
 @api_view(['GET'])
 def sync_files(request, company_id):
     try:
-        AWS_ACCESS_KEY_ID = 'AKIAJCLD2GUHLS6VY3LQ'
-        AWS_SECRET_ACCESS_KEY = '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'
         conn = boto.connect_s3(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY)
         company = MediaCompany.objects.filter(id=company_id).first()
         bucket = conn.get_bucket('hog-production')
