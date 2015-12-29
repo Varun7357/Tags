@@ -2,3 +2,4 @@
 .idea/*
 *.pyc
 *.log
+sstream/settings.py
