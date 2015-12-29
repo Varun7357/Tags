@@ -131,7 +131,7 @@ LOGGING = {
         'file': {
             'level': 'ERROR',
             'class': 'logging.FileHandler',
-            'filename': '/Users/nitinw/workspace/sstream/admin.log',
+            'filename': '/Users/office/workspace/SSmeta/admin.log',
             'formatter': 'verbose'
         },
     },
