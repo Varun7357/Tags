@@ -44,7 +44,8 @@ INSTALLED_APPS = (
     'rest_framework.authtoken',
     'sstream',
     'manageboard',
-    'social.apps.django_app.default'
+    'social.apps.django_app.default',
+    'lam'
 
 )
 

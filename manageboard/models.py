@@ -40,3 +40,6 @@ class MetaData(models.Model):
     link = models.CharField(max_length=100, blank=True, null=True)
     metaFields = models.ForeignKey(MetaFields, blank=True, null=True)
     status = models.ForeignKey(MetaStatus, max_length=20, null=True)
+
+
+

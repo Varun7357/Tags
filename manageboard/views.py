@@ -6,6 +6,9 @@ from rest_framework.parsers import FileUploadParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 import boto
+
+from lam.models import LAM_User
+from lam.serializers import LAMUserSerializer
 from serializer import CompanySerializer, MetaDataSerializer, MetaFieldSerializer
 from models import MediaCompany, MetaData, MetaStatus, MetaFields
 from rest_framework.filters import SearchFilter
@@ -234,3 +237,10 @@ def exists_metadata(request, meta_id):
     except Exception, e:
         return Response(str(e), status.HTTP_400_BAD_REQUEST)
     return Response(is_exists, status.HTTP_200_OK)
+
+
+# @authentication_classes((TokenAuthentication, SessionAuthentication,))
+# @permission_classes((IsAuthenticated,))
+class LAMUserDataViewSet(viewsets.ModelViewSet):
+    serializer_class = LAMUserSerializer
+    queryset = LAM_User.objects.all()
