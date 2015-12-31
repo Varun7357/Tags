@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from datetime import datetime
 from dateutil import parser
 from rest_framework import viewsets
+import logging
 
 import requests, json , csv , pandas as pa,numpy as np
 
@@ -16,6 +17,7 @@ import requests, json , csv , pandas as pa,numpy as np
 from lam.models import InstallData,LAM_User
 from lam.serializers import InstallDataSerializer, LAMUserSerializer
 
+logger = logging.getLogger(__name__)
 
 @api_view(['POST'])
 def sync_installation_data(request):
@@ -36,7 +38,7 @@ def sync_installation_data(request):
         media_source_user.save()
         return Response("Synced successfully", status.HTTP_201_CREATED)
     except Exception, e:
-
+        logger.error("error while registering media source" , exc_info=True)
         return Response(str(e), status.HTTP_400_BAD_REQUEST)
 
 

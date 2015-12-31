@@ -3,7 +3,7 @@ from django.db import models
 # Create your models here.
 
 class LAM_User(models.Model):
-    media_source = models.CharField(max_length=100, blank=True, null=True)
+    media_source = models.CharField(max_length=100, blank=True, null=False)
     email = models.CharField(max_length=100, blank=True, null=True)
     name = models.CharField(max_length=100, blank=True, null=True)
     install_count = models.IntegerField(max_length=100,default=0)
