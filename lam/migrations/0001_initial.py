@@ -29,6 +29,10 @@ class Migration(migrations.Migration):
                 ('media_source', models.CharField(max_length=100, null=True, blank=True)),
                 ('email', models.CharField(max_length=100, null=True, blank=True)),
                 ('name', models.CharField(max_length=100, null=True, blank=True)),
+                ('install_count', models.IntegerField(default=0, max_length=100)),
+                ('is_leader', models.BooleanField(default=False)),
+                ('is_intern', models.BooleanField(default=True)),
+                ('leader', models.ForeignKey(default=None, to='lam.LAM_User', null=True)),
             ],
             options={
             },
