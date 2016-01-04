@@ -23,6 +23,7 @@ logger = logging.getLogger(__name__)
 def sync_installation_data(request):
     try:
         #increaseCount = False
+        logger.error(request.data)
         campaign = request.data['campaign']
         source = request.data['media_source']
         summary = request.data['install_time']
@@ -38,6 +39,7 @@ def sync_installation_data(request):
         media_source_user.save()
         return Response("Synced successfully", status.HTTP_201_CREATED)
     except Exception, e:
+        logger.error(str(e))
         logger.error("error while registering media source" , exc_info=True)
         return Response(str(e), status.HTTP_400_BAD_REQUEST)
 
