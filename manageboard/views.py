@@ -243,4 +243,4 @@ def exists_metadata(request, meta_id):
 # @permission_classes((IsAuthenticated,))
 class LAMUserDataViewSet(viewsets.ModelViewSet):
     serializer_class = LAMUserSerializer
-    queryset = LAM_User.objects.all().order_by('install_count')
+    queryset = LAM_User.objects.all().order_by('-install_count')

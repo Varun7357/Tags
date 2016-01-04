@@ -45,12 +45,14 @@ INSTALLED_APPS = (
     'sstream',
     'manageboard',
     'social.apps.django_app.default',
-    'lam'
+    'lam',
+    'corsheaders'
 
 )
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -96,7 +98,7 @@ DATABASES = {
         'HOST': 'localhost',
         'POST': '3306',
         'USER': 'root',
-        'PASSWORD': '',
+        'PASSWORD': 'admin',
     }
 }
 
@@ -132,7 +134,7 @@ LOGGING = {
         'file': {
             'level': 'ERROR',
             'class': 'logging.FileHandler',
-            'filename': '/Users/office/workspace/SSmeta/admin.log',
+            'filename': '/usr/local/projects/logs/sstream.log',
             'formatter': 'verbose'
         },
     },
@@ -162,3 +164,10 @@ STATIC_URL = '/static/'
 TEMPLATE_DIRS = [os.path.join(BASE_DIR, 'templates')]
 
 ANONYMOUS_USER_ID = -1
+
+CORS_ORIGIN_ALLOW_ALL = True
+
+CORS_ORIGIN_WHITELIST = (
+    'google.com',
+    'www.lookatmeapp.co'
+)
