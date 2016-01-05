@@ -2,7 +2,7 @@ from django.conf.urls import patterns, include, url
 from django.contrib import admin
 from rest_framework import routers
 from manageboard import views
-from lam.views import sync_installation_data ,sync_android_data,sync_ios_data
+from lam.views import sync_installation_data ,sync_android_data,sync_ios_data , compare_install
 
 
 router = routers.DefaultRouter()
@@ -27,8 +27,7 @@ urlpatterns = patterns('', url(r'^ssadmin/', include(router.urls)),
                        url(r'^logout/$', views.logout, name='logout'),
                        url(r'^lam/data/$', sync_installation_data),
                        url(r'^sync/android/$', sync_android_data),
-                       url(r'^sync/ios/$', sync_ios_data)
-
-
+                       url(r'^sync/ios/$', sync_ios_data),
+                       url(r'^sync/data/$', compare_install)
 
 )

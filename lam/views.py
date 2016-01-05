@@ -90,3 +90,21 @@ def sync_ios_data(request):
                 media_source.save()
         return Response("Synced successfully", status.HTTP_200_OK)
     return Response("Sync not successful", status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['GET'])
+def compare_install(request):
+    try:
+
+        media_sources = LAM_User.objects.all()
+        for source in media_sources:
+            exact_count = source.android_count + source.ios_count
+            if source.install_count < exact_count:
+                source.install_count = exact_count
+                source.save()
+        return Response("Synced successfully", status.HTTP_200_OK)
+
+    except Exception, e:
+        logger.error(str(e))
+        logger.error("error while comparing installs", exc_info=True)
+        return Response(str(e), status.HTTP_400_BAD_REQUEST)
