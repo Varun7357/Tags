@@ -4,3 +4,4 @@
 *.log
 sstream/settings.py
 nohup.out
+settings.py

@@ -10,6 +10,9 @@ class LAM_User(models.Model):
     is_leader= models.BooleanField(default=False)
     is_intern = models.BooleanField(default=True)
     leader = models.ForeignKey("self" , null=True,default=None)
+    ios_count= models.IntegerField(max_length=100,default=0)
+    android_count= models.IntegerField(max_length=100,default=0)
+
 
 
     def __unicode__(self):
