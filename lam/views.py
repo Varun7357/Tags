@@ -43,9 +43,11 @@ def sync_installation_data(request):
         return Response(str(e), status.HTTP_400_BAD_REQUEST)
 
 
+
 class InstallDataViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = InstallData.objects.all()
     serializer_class = InstallDataSerializer
+
 
 
 @api_view(['GET'])
@@ -108,3 +110,30 @@ def compare_install(request):
         logger.error(str(e))
         logger.error("error while comparing installs", exc_info=True)
         return Response(str(e), status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+def update_profile(request):
+    try:
+        first_row = True
+        response = request.FILES['fileUpload']
+        cr = csv.reader(response)
+        for row in cr:
+            if first_row:
+                first_row = False
+                continue
+            source = str(row[02])
+            media_source = LAM_User.objects.filter(media_source=source).first()
+            if media_source is not None:
+                media_source.name = row[0]
+                media_source.email = row[1]
+                if row[4] =='T':
+                    media_source.is_intern = False
+                    media_source.is_leader = True
+                else:
+                    media_source.is_leader = False
+                    media_source.leader =LAM_User.objects.filter(media_source=row[3]).first()
+                media_source.save()
+        return Response("Synced successfully", status.HTTP_200_OK)
+    except Exception, e:
+        return Response("Sync not successful", status.HTTP_500_INTERNAL_SERVER_ERROR)

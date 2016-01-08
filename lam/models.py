@@ -15,11 +15,6 @@ class LAM_User(models.Model):
 
 
 
-    def __unicode__(self):
-        return str(self.email)
-
-
-
 class InstallData(models.Model):
     campaign_name = models.CharField(max_length=100, blank=True, null=False)
     media_source=models.ForeignKey(LAM_User, blank=True, null=True)
