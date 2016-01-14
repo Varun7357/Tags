@@ -13,6 +13,9 @@ class LAM_User(models.Model):
     ios_count= models.IntegerField(max_length=100,default=0)
     android_count= models.IntegerField(max_length=100,default=0)
 
+    def __unicode__(self):
+        return self.media_source
+
 
 
 class InstallData(models.Model):

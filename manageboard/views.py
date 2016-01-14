@@ -9,8 +9,9 @@ import boto
 
 from lam.models import LAM_User
 from lam.serializers import LAMUserSerializer
-from serializer import CompanySerializer, MetaDataSerializer, MetaFieldSerializer
-from models import MediaCompany, MetaData, MetaStatus, MetaFields
+from serializer import CompanySerializer, MetaDataSerializer, MetaFieldSerializer, ThemesSerializer, \
+    MediaTypeSerializer, ContentTypeSerializer, CategorySerializer
+from models import MediaCompany, MetaData, MetaStatus, MetaFields, Themes, ContentType, Category, MediaType
 from rest_framework.filters import SearchFilter
 from rest_framework.permissions import IsAuthenticated
 from constants import MetaStatusConstants, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY
@@ -23,8 +24,6 @@ from django.template.context import RequestContext
 from util import email_check
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.contrib.auth import logout as auth_logout
-
-
 
 
 # Create your views here.
@@ -75,6 +74,18 @@ def sync_companies(request):
 
 
 @api_view(['GET'])
+def fetch_url(request,meta_id):
+    try:
+        meta_obj = MetaData.objects.filter(id=meta_id).first()
+        conn = boto.connect_s3(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY)
+        url = conn.generate_url(60, 'GET', 'hog-production', meta_obj.link,
+                                response_headers={'response-content-type': 'application/octet-stream'})
+        return Response(url, status.HTTP_200_OK)
+    except Exception, e:
+        return Response(str(e), status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
 def sync_files(request, company_id):
     try:
         conn = boto.connect_s3(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY)
@@ -109,51 +120,62 @@ def save_metadata(request, meta_id):
     try:
         meta_obj = MetaData.objects.filter(id=meta_id).first()
         length = request.data['length']
-        version = request.data['version']
         mediaType = request.data['mediaType']
+        mediaTypeObj = MediaType.objects.filter(id=mediaType).first()
         fileTitle = request.data['fileTitle']
         description = request.data['description']
-        themes = request.data['themes']
-        god = request.data['god']
-        book = request.data['book']
-        shrines = request.data['shrines']
-        topic = request.data['topic']
+        themes = request.data['theme']
+        themesObj = Themes.objects.filter(id=themes).first()
         language = request.data['language']
-        duration = request.data['duration']
         seriesTitle = request.data['seriesTitle']
         seriesNumber = request.data['seriesNumber']
-        episodeNumber = request.data['episodeNumber']
         contentType = request.data['contentType']
+        contentTypeObj = ContentType.objects.filter(id=contentType).first()
         artist = request.data['artist']
+        category = request.data['category']
+        categoryObj = Category.objects.filter(id=category).first()
+        entity = request.data['entity']
+        login_req = request.data['loginRequired']
+        premium_req = request.data['premiumRequired']
+        monetize = request.data['monetize']
+        tags = request.data['tags']
+        create_dt = request.data['create_dt']
 
         if meta_obj.metaFields is None:
-            meta_fields = MetaFields.objects.create(length=length, version=version, mediaType=mediaType,
+            meta_fields = MetaFields.objects.create(length=length, mediaType=mediaTypeObj,
                                                     fileTitle=fileTitle, description=description,
-                                                    themes=themes, god=god, book=book, shrines=shrines, topic=topic,
-                                                    language=language, duration=duration, seriesTitle=seriesTitle,
-                                                    seriesNumber=seriesNumber, episodeNumber=episodeNumber,
-                                                    contentType=contentType, artist=artist)
+                                                    themes=themesObj, category=categoryObj, entity=entity,
+                                                    login_required=login_req, premium_required=premium_req,
+                                                    monetize=monetize,
+                                                    tags=tags,
+                                                    language=language, seriesTitle=seriesTitle,
+                                                    seriesNumber=seriesNumber,
+                                                    contentType=contentTypeObj, artist=artist, create_dt=create_dt)
             meta_obj.metaFields_id = meta_fields.id
             meta_obj.save()
         else:
             meta_fields = meta_obj.metaFields
             meta_fields.length = length
-            meta_fields.version = version
-            meta_fields.mediaType = mediaType
+            mediaTypeObj = MediaType.objects.filter(id=mediaType).first()
+            meta_fields.mediaType = mediaTypeObj
             meta_fields.fileTitle = fileTitle
             meta_fields.description = description
-            meta_fields.themes = themes
-            meta_fields.god = god
-            meta_fields.book = book
-            meta_fields.shrines = shrines
-            meta_fields.topic = topic
+            themesObj = Themes.objects.filter(id=themes).first()
+            meta_fields.themes = themesObj
             meta_fields.language = language
-            meta_fields.duration = duration
             meta_fields.seriesTitle = seriesTitle
             meta_fields.seriesNumber = seriesNumber
-            meta_fields.episodeNumber = episodeNumber
-            meta_fields.contentType = contentType
+            contentTypeObj = ContentType.objects.filter(id=contentType).first()
+            meta_fields.contentType = contentTypeObj
             meta_fields.artist = artist
+            categoryObj = Category.objects.filter(id=category).first()
+            meta_fields.category = categoryObj
+            meta_fields.entity = entity
+            meta_fields.login_req = login_req
+            meta_fields.premium_req = premium_req
+            meta_fields.monetize = monetize
+            meta_fields.tags = tags
+            meta_fields.create_dt = create_dt
 
         meta_fields.save()
 
@@ -197,7 +219,6 @@ class MetaStatusViewSet(viewsets.ReadOnlyModelViewSet):
 class MetaDataFilter(django_filters.FilterSet):
     # status = django_filters.CharFilter(name='currentDataState__name')
     name = django_filters.CharFilter(name='name')
-
 
     class Meta:
         model = MetaData
@@ -244,3 +265,31 @@ def exists_metadata(request, meta_id):
 class LAMUserDataViewSet(viewsets.ModelViewSet):
     serializer_class = LAMUserSerializer
     queryset = LAM_User.objects.all().order_by('-install_count')
+
+
+@authentication_classes((TokenAuthentication, SessionAuthentication,))
+@permission_classes((IsAuthenticated,))
+class ThemesViewSet(viewsets.ModelViewSet):
+    queryset = Themes.objects.all()
+    serializer_class = ThemesSerializer
+
+
+@authentication_classes((TokenAuthentication, SessionAuthentication,))
+@permission_classes((IsAuthenticated,))
+class MediaTypeViewSet(viewsets.ModelViewSet):
+    queryset = MediaType.objects.all()
+    serializer_class = MediaTypeSerializer
+
+
+@authentication_classes((TokenAuthentication, SessionAuthentication,))
+@permission_classes((IsAuthenticated,))
+class ContentTypeViewSet(viewsets.ModelViewSet):
+    queryset = ContentType.objects.all()
+    serializer_class = ContentTypeSerializer
+
+
+@authentication_classes((TokenAuthentication, SessionAuthentication,))
+@permission_classes((IsAuthenticated,))
+class CategoryTypeViewSet(viewsets.ModelViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer

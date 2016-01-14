@@ -2,7 +2,7 @@ __author__ = 'nitinw'
 
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from models import MediaCompany , MetaData , MetaFields , MetaStatus
+from models import MediaCompany , MetaData , MetaFields , MetaStatus, MediaType, Themes , ContentType, Category
 
 
 class CompanySerializer(serializers.ModelSerializer):
@@ -47,4 +47,42 @@ class MetaStatusSerializer(serializers.ModelSerializer):
         }
 
 
+class MediaTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MediaType
+        extra_kwargs = {
+            "id": {
+                "read_only": False,
+                "required": False,
+            },
+        }
 
+class ThemesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Themes
+        extra_kwargs = {
+            "id": {
+                "read_only": False,
+                "required": False,
+            },
+        }
+
+class ContentTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ContentType
+        extra_kwargs = {
+            "id": {
+                "read_only": False,
+                "required": False,
+            },
+        }
+
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        extra_kwargs = {
+            "id": {
+                "read_only": False,
+                "required": False,
+            },
+        }

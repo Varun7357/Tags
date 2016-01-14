@@ -98,7 +98,7 @@ DATABASES = {
         'HOST': 'localhost',
         'POST': '3306',
         'USER': 'root',
-        'PASSWORD': 'admin',
+        'PASSWORD': '',
     }
 }
 
@@ -134,7 +134,7 @@ LOGGING = {
         'file': {
             'level': 'ERROR',
             'class': 'logging.FileHandler',
-            'filename': '/usr/local/projects/logs/sstream.log',
+            'filename': '/Users/office/workspace/sstream/sstream.log',
             'formatter': 'verbose'
         },
     },

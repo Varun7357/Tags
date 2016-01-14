@@ -1,50 +1,147 @@
 {% extends 'views/sidebar.html' %}
 
 {% block content %}
-    <div class="container-fluid" ng-init="setValues({{meta_obj.id}})" ng-controller="metaFieldController">
-        <div class="row">
-            <div class="col-sm-12">
-                <h3 class="page-header" >
-                    Add/Edit Meta Fields
-                </h3>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-6">
-                <form role="form" name="metaForm" ng-submit="submitForm()" novalidate>
-                    <div class="form-group" ng-show="submitted">
-                        <span ng-show="successFlag" style="color: green">{$ msg $}</span>
-                        <span ng-show="!successFlag" style="color: red">{$ msg $}</span>
-                    </div>
-
-                    <div class="form-group"
-                         ng-class="{ 'has-error' : metaForm.name.$invalid && (gymForm.name.$dirty || submitted)}">
-                        <label>Length</label>
-                        <input class="form-control" type="text" placeholder="in minutes" name="length" ng-model="length"
-                               ng-required="true">
-
-                        <p class="help-block"
-                           ng-show="gymForm.name.$error.required && (gymForm.name.$dirty || submitted)">
-                            Length is required.
-                        </p>
-                    </div>
-                    <div class="form-group">
-                        <label>version</label>
-                        <input class="form-control" type="text" placeholder=" eg. 1.1" name="version"
-                               ng-model="version">
-                    </div>
-                    <div class="form-group">
-                        <label>mediaType</label>
-                        <input class="form-control" type="text" placeholder="Audio/Video" name="mediaType"
-                               ng-model="mediaType">
-                    </div>
-
-                    {% comment %}<button type="submit" class="btn btn-primary" ng-show="!successFlag">Save</button>{% endcomment %}
-                    <button type="submit" class="btn btn-primary" data-ng-disabled="metaForm.$invalid || submitted">
-                        Save
-                    </button>
-                </form>
-            </div>
+<div class="container-fluid" ng-init="setValues({{meta_obj.id}})" ng-controller="metaFieldController">
+    <div class="row">
+        <div class="col-sm-12">
+            <h3 class="page-header">
+                Add/Edit Meta Fields
+            </h3>
         </div>
     </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <form role="form" name="metaForm" ng-submit="submitForm()" novalidate>
+                <div class="form-group" ng-show="submitted">
+                    <span ng-show="successFlag" style="color: green">{$ msg $}</span>
+                    <span ng-show="!successFlag" style="color: red">{$ msg $}</span>
+                </div>
+
+                <div class="form-group">
+                    <video width="320" height="240" controls>
+                        <source src="{{video_url}}" dynamic-url dynamic-url-src="{{video_url}}">
+                    </video>
+                </div>
+                <div class="form-group"
+                     ng-class="{ 'has-error' : metaForm.name.$invalid && (metaForm.name.$dirty || submitted)}">
+                    <label>Length</label>
+                    <input class="form-control" type="text" placeholder="in seconds" name="length" ng-model="length"
+                           ng-required="false">
+
+                    <!--<p class="help-block"-->
+                    <!--ng-show="metaForm.name.$error.required && (metaForm.name.$dirty || submitted)">-->
+                    <!--Length is required.-->
+                    <!--</p>-->
+                </div>
+                <div class="form-group">
+                    <label>Media Type</label>
+                    <select class="form-control" ng-model="mediaType" ng-required="false">
+                        <option ng-repeat="type in mediaTypeList" value="{$ type.id $}">{$ type.name $}</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>File Title</label>
+                    <input class="form-control" type="text" placeholder="File name" name="fileTitle"
+                           ng-model="fileTitle">
+                </div>
+
+                <div class="form-group">
+                    <label>Description</label>
+                    <input class="form-control" type="text" placeholder="Description" name="description"
+                           ng-model="description">
+                </div>
+
+                <div class="form-group">
+                    <label>Theme</label>
+                    <select class="form-control" ng-model="theme" ng-required="true">
+                        <option ng-repeat="theme in themesList" value="{$ theme.id $}">{$ theme.name $}</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Language</label>
+                    <input class="form-control" type="text" placeholder="Language" name="language"
+                           ng-model="language">
+                </div>
+
+                <div class="form-group">
+                    <label>Series Title</label>
+                    <input class="form-control" type="text" placeholder="Series Title" name="seriesTitle"
+                           ng-model="seriesTitle">
+                </div>
+
+                <div class="form-group">
+                    <label>Series Number</label>
+                    <input class="form-control" type="text" placeholder="Series Number" name="seriesNumber"
+                           ng-model="seriesNumber">
+                </div>
+
+                <div class="form-group">
+                    <label>Content Type</label>
+                    <select class="form-control" ng-model="contentType" ng-required="false">
+                        <option ng-repeat="contentType in contentTypeList" value="{$ contentType.id $}">{$
+                            contentType.name $}
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Artist</label>
+                    <input class="form-control" type="text" placeholder="artist" name="artist"
+                           ng-model="artist">
+                </div>
+
+                <div class="form-group">
+                    <label>Category</label>
+                    <select class="form-control" ng-model="category" ng-required="false">
+                        <option ng-repeat="category in categoryList" value="{$ category.id $}">{$
+                            category.name $}
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Entity</label>
+                    <input class="form-control" type="text" placeholder="entity" name="entity"
+                           ng-model="entity">
+                </div>
+
+                <div class="form-group">
+                    <label>Login Required</label>
+                    <input class="form-control" type="checkbox" name="loginRequired"
+                           ng-model="loginRequired">
+                </div>
+
+                <div class="form-group">
+                    <label>Premium Required</label>
+                    <input class="form-control" type="checkbox" name="premiumRequired"
+                           ng-model="premiumRequired">
+                </div>
+
+                <div class="form-group">
+                    <label>Monetize</label>
+                    <input class="form-control" type="checkbox" name="monetize" ng-click="clickMeMonetize(monetize)"
+                           ng-model="monetize">
+                </div>
+                <div class="form-group">
+                    <label>Tags</label>
+                    <input class="form-control" type="tags" name="tags"
+                           ng-model="tags">
+                </div>
+
+                <div class="form-group">
+                    <label>Create Date</label>
+                    <input class="form-control" type="DATETIME" name="create_dt"
+                           ng-model="create_dt">
+                </div>
+                {% comment %}
+                <button type="submit" class="btn btn-primary" ng-show="!successFlag">Save</button>
+                {% endcomment %}
+                <button type="submit" class="btn btn-primary" data-ng-disabled="metaForm.$invalid || submitted">
+                    Save
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
 {% endblock %}

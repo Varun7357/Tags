@@ -14,6 +14,14 @@ var myApp = angular.module('app', ['ngCookies', 'angucomplete', 'angularSpinner'
         }
     ]);
 
+myApp.directive('dynamicUrl', function () {
+    return {
+        restrict: 'A',
+        link: function postLink(scope, element, attr) {
+            element.attr('src', attr.dynamicUrlSrc);
+        }
+    };
+});
 
 myApp.controller('searchController', ['$scope', '$http', '$filter', function ($scope, $http, $filter) {
 
@@ -143,28 +151,97 @@ angular.module('GoogleDirectives', []).
 myApp.controller('metaFieldController', ['$scope', '$http', function ($scope, $http, $location) {
 
     $scope.edit = false;
-    $scope.length = "";
-    $scope.version = "";
-    $scope.mediaType = "";
+    $scope.length = 0;
+    $scope.mediaType = 0;
+    $scope.description = "";
+    $scope.fileTitle = "";
+    $scope.theme = "";
+    $scope.language = "";
+    $scope.seriesTitle = "";
+    $scope.seriesNumber = "";
+    $scope.contentType = "";
+    $scope.artist = "";
+    $scope.category = "";
+    $scope.categoryList = [];
+    $scope.themesList = [];
+    $scope.contentTypeList = [];
+    $scope.tags = "";
+    $scope.monetize = false;
+    $scope.premiumRequired = false;
+    $scope.loginRequired = false;
+    $scope.mediaTypeList = [];
+    $scope.entity = "";
+    $scope.create_dt = "";
+
+     $scope.clickMeMonetize = function(param) {
+        if (param) {
+            $scope.monetize = false;
+        } else {
+            $scope.monetize = true;
+        }
+    };
 
 
     $scope.setValues = function (meta_id) {
-
         $scope.meta_id = meta_id;
+        $http.get("/video/"+meta_id).success(
+            function (resp) {
+                $scope.video_url= resp;
+            });
+
+         $http.get("/ssadmin/mediatype/all/").success(
+            function (resp) {
+                $scope.mediaTypeList= resp;
+            });
+
+              $http.get("/ssadmin/contenttype/all/").success(
+            function (resp) {
+                $scope.contentTypeList= resp;
+            });
+
+
+                 $http.get("/ssadmin/category/all/").success(
+            function (resp) {
+                $scope.categoryList= resp;
+            });
+
+                $http.get("/ssadmin/themes/all/").success(
+            function (resp) {
+                $scope.themesList= resp;
+            });
+
+
+
         $http.get("/metadata/exists/" + $scope.meta_id).success(
             function (resp) {
                 $scope.edit = resp;
                 if ($scope.edit) {
                     $http.get("/get/metadata/" + $scope.meta_id).success(
-                        function (resp) {
-                            $scope.length = resp.length;
-                            $scope.mediaType = resp.mediaType;
-                            $scope.version = resp.version;
+                        function (resp1) {
+                            $scope.length = resp1.length;
+                            $scope.mediaType = resp1.mediaType;
+                            $scope.description = resp1.description;
+                            $scope.fileTitle = resp1.fileTitle;
+                            $scope.theme = resp1.themes;
+                            $scope.language = resp1.language;
+                            $scope.seriesTitle = resp1.seriesTitle;
+                            $scope.seriesNumber = resp1.seriesNumber;
+                            $scope.contentType = resp1.contentType;
+                            $scope.artist = resp1.artist;
+                            $scope.category= resp1.category;
+                            $scope.tags = resp1.tags;
+                            $scope.monetize = resp1.monetize;
+                            $scope.premiumRequired = resp1.premium_required;
+                            $scope.loginRequired = resp1.login_required;
+                            $scope.entity = resp1.entity;
+                            $scope.create_dt = resp1.create_dt;
+
                         }
                     );
                 }
 
             });
+
 
 
     };
@@ -175,7 +252,11 @@ myApp.controller('metaFieldController', ['$scope', '$http', function ($scope, $h
 
             var params = {
                 'length': $scope.length, 'mediaType': $scope.mediaType,
-                'version': $scope.version
+                'description': $scope.description,'fileTitle':$scope.fileTitle,
+                'theme' : $scope.theme, 'language' : $scope.language , 'seriesTitle' : $scope.seriesTitle ,
+                'seriesNumber' : $scope.seriesNumber , 'contentType' : $scope.contentType , 'artist' : $scope.artist,
+                'category' : $scope.category , 'tags' : $scope.tags ,  'monetize' :$scope.monetize ,'create_dt' :$scope.create_dt,
+                'premiumRequired' : $scope.premiumRequired , 'loginRequired' : $scope.loginRequired , 'entity' :$scope.entity
             };
 
             var api_url = "/save/meta/" + $scope.meta_id;
