@@ -39,4 +39,4 @@ setuptools-git==1.1
 simplejson==3.6.5
 six==1.9.0
 Unirest==1.1.7
-urllib3==1.10.2
+urllib3==1.26.5
